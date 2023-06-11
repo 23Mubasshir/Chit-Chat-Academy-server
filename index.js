@@ -8,7 +8,7 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri =
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.p1ooveo.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -27,8 +27,28 @@ async function run() {
     await client.connect();
 
     const classesCollection = client.db("assignment12DB").collection("classes");
+    const usersCollection = client.db("assignment12DB").collection("users");
     const instructorsCollection = client.db("assignment12DB").collection("Instructors");
     const cartCollection = client.db("assignment12DB").collection("carts");
+
+
+     // For users
+     app.get('/users', async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post('/users', async (req, res) => {
+      const user = req.body;
+      const query = { email: user.email }
+      const existingUser = await usersCollection.findOne(query);
+      if (existingUser) {
+        return res.send({ message: 'user already exists' })
+      }
+
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
 
 
     // For all Classes 
@@ -43,7 +63,6 @@ async function run() {
       })
 
     // For Cart collection
-
     app.get('/carts', async (req, res) => {
       const email = req.query.email;
 
@@ -85,9 +104,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("boss is sitting");
+  res.send("Our School is Running");
 });
 
 app.listen(port, () => {
-  console.log(`Bistro boss is sitting on port ${port}`);
+  console.log(`Our School is running on port ${port}`);
 });
