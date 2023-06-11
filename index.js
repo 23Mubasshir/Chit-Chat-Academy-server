@@ -123,13 +123,26 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/classDenied/admin/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: "denied",
+        },
+      };
+
+      const result = await classesCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
     app.delete("/users/admin/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await usersCollection.deleteOne(query);
       res.send(result);
     });
-
 
     // verifyJWT check instructor
     app.get("/users/instructor/:email", verifyJWT, async (req, res) => {
@@ -159,12 +172,11 @@ async function run() {
       res.send(result);
     });
 
-    
-
     // For all Classes
     app.get("/classes", async (req, res) => {
       const result = await classesCollection.find().toArray();
-      res.send(result);
+      const reversedResult = result.reverse();
+      res.send(reversedResult);
     });
 
     // To add a Class
@@ -220,11 +232,13 @@ async function run() {
       res.send(result);
     });
 
-     // get my classes by gmail
-     app.get("/classes/:email", async (req, res) => {
+    // get my classes by gmail
+    app.get("/classes/:email", async (req, res) => {
       try {
         const email = req.params.email;
-        const jobs = await classesCollection.find({ instructor_email: email }).toArray();
+        const jobs = await classesCollection
+          .find({ instructor_email: email })
+          .toArray();
         res.send(jobs);
       } catch (error) {
         console.error(error);
