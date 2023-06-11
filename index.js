@@ -109,6 +109,20 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/classApproved/admin/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: "approved",
+        },
+      };
+
+      const result = await classesCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
     app.delete("/users/admin/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
