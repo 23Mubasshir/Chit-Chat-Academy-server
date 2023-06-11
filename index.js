@@ -206,6 +206,18 @@ async function run() {
       res.send(result);
     });
 
+     // get my classes by gmail
+     app.get("/classes/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+        const jobs = await classesCollection.find({ instructor_email: email }).toArray();
+        res.send(jobs);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred while fetching the data.");
+      }
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
