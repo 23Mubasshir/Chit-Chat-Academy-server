@@ -152,6 +152,21 @@ async function run() {
       const result = await classesCollection.find().toArray();
       res.send(result);
     });
+
+    // To add a Class
+    app.post("/classes", async (req, res) => {
+      const Class = req.body;
+      const result = await classesCollection.insertOne(Class);
+      if (result?.insertedId) {
+        return res.status(200).send(result);
+      } else {
+        return res.status(404).send({
+          message: "can not insert try again later",
+          status: false,
+        });
+      }
+    });
+
     // For all instructors
     app.get("/instructors", async (req, res) => {
       const result = await instructorsCollection.find().toArray();
