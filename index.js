@@ -186,7 +186,7 @@ async function run() {
         },
       };
 
-      const result = await cartCollection.updateOne(filter, updatedFeedback, options);
+      const result = await classesCollection.updateOne(filter, updatedFeedback, options);
       res.send(result);
     });
 
