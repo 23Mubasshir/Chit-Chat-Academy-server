@@ -172,7 +172,23 @@ async function run() {
       res.send(result);
     });
 
-    
+    // Update feedback
+    app.put("/update-feedback/:id", async (req, res) => {
+      const id = req.params.id;
+      const NewFeedback = req.body;
+      console.log(id, NewFeedback);
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      
+      const updatedFeedback = {
+        $set: {
+          feedback: NewFeedback.feedback,
+        },
+      };
+
+      const result = await cartCollection.updateOne(filter, updatedFeedback, options);
+      res.send(result);
+    });
 
 
     // For all approved Classes
@@ -181,7 +197,7 @@ async function run() {
       const reversedResult = result.reverse();
       res.send(reversedResult);
     });
-
+    
     // For all Classes
     app.get("/AllClasses", async (req, res) => {
       const result = await classesCollection.find().toArray();
