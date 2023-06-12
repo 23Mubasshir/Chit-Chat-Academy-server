@@ -172,8 +172,18 @@ async function run() {
       res.send(result);
     });
 
-    // For all Classes
+    
+
+
+    // For all approved Classes
     app.get("/classes", async (req, res) => {
+      const result = await classesCollection.find({ role:"approved" }).toArray();
+      const reversedResult = result.reverse();
+      res.send(reversedResult);
+    });
+
+    // For all Classes
+    app.get("/AllClasses", async (req, res) => {
       const result = await classesCollection.find().toArray();
       const reversedResult = result.reverse();
       res.send(reversedResult);
